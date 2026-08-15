@@ -1,0 +1,61 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Siemens OZW672",
+        "description": "Connect to the local OZW672 gateway. Datapoints are added later from the Datapoint Browser.",
+        "data": {
+          "hostname": "Host / IP address",
+          "username": "Username",
+          "password": "Password",
+          "scaninterval": "Polling interval (seconds)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot authenticate or connect to the OZW672."
+    },
+    "abort": {
+      "already_configured": "This gateway is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "menu_options": {
+          "browser": "Datapoint Browser",
+          "remove": "Remove Datapoint",
+          "settings": "Settings"
+        }
+      },
+      "browser": {
+        "title": "Datapoint Browser",
+        "description": "The OZW menu tree is scanned now, only for this browser session. Search by datapoint name and select an item; its metadata is loaded only after selection. Diagnostic: {error}",
+        "data": {"datapoint_id": "Search datapoints by name or operation line"}
+      },
+      "add_entity": {
+        "title": "Add Entity",
+        "submit": "Add Entity",
+        "description": "Name: {name}\nCurrent value: {value} {unit}\nDatatype: {datatype}\nWritable: {writable}\nEnumeration values: {enums}\nHome Assistant entity: {entity_type}\n\nSubmit to add this entity."
+      },
+      "remove": {
+        "title": "Remove datapoint",
+        "data": {"datapoint_id": "Datapoint"}
+      },
+      "settings": {
+        "title": "Connection settings",
+        "data": {
+          "scaninterval": "Polling interval (seconds)",
+          "httptimeout": "HTTP timeout (seconds)",
+          "httpretries": "HTTP retries"
+        }
+      }
+    },
+    "error": {
+      "datapoint_not_found": "The datapoint does not exist or cannot be read.",
+      "datapoint_processing_failed": "The selected datapoint could not be processed. See the diagnostic shown above.",
+      "cannot_connect": "Cannot connect to the OZW672."
+    },
+    "abort": {"no_datapoints": "There are no manually added datapoints to remove."}
+  }
+}

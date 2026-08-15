@@ -1,0 +1,65 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Siemens OZW672",
+        "description": "Připojení k místní bráně OZW672. Datové body se přidávají později v prohlížeči datových bodů.",
+        "data": {
+          "hostname": "Hostitel / IP adresa",
+          "username": "Uživatelské jméno",
+          "password": "Heslo",
+          "scaninterval": "Interval čtení (sekundy)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "K OZW672 se nelze připojit nebo ověřit přihlášení."
+    },
+    "abort": {
+      "already_configured": "Tato brána je již nastavena."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "menu_options": {
+          "browser": "Prohlížeč datových bodů",
+          "remove": "Odebrat datový bod",
+          "settings": "Nastavení"
+        }
+      },
+      "browser": {
+        "title": "Prohlížeč datových bodů",
+        "description": "Strom menu OZW se nyní prohledá pouze pro tuto relaci. Vyhledejte datový bod podle názvu a vyberte jej; metadata se načtou až po výběru. Diagnostika: {error}",
+        "data": {
+          "datapoint_id": "Vyhledat datový bod podle názvu nebo provozního řádku"
+        }
+      },
+      "add_entity": {
+        "title": "Přidat entitu",
+        "submit": "Přidat entitu",
+        "description": "Název: {name}\nAktuální hodnota: {value} {unit}\nDatový typ: {datatype}\nZapisovatelný: {writable}\nHodnoty výčtu: {enums}\nEntita Home Assistantu: {entity_type}\n\nPotvrzením přidáte entitu."
+      },
+      "remove": {
+        "title": "Odebrat datový bod",
+        "data": {"datapoint_id": "Datový bod"}
+      },
+      "settings": {
+        "title": "Nastavení",
+        "data": {
+          "scaninterval": "Interval čtení (sekundy)",
+          "httptimeout": "Časový limit HTTP (sekundy)",
+          "httpretries": "Počet opakování HTTP"
+        }
+      }
+    },
+    "error": {
+      "datapoint_not_found": "Datový bod neexistuje nebo jej nelze přečíst.",
+      "datapoint_processing_failed": "Vybraný datový bod nelze zpracovat. Viz diagnostika výše.",
+      "cannot_connect": "K OZW672 se nelze připojit."
+    },
+    "abort": {
+      "no_datapoints": "Nejsou přidány žádné datové body k odebrání."
+    }
+  }
+}
