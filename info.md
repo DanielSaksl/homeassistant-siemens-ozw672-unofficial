@@ -1,6 +1,6 @@
 # Siemens OZW672 Unofficial — Enhanced Fork
 
-**0.4.0-beta1**
+**0.4.0-beta2**
 
 An unofficial enhanced fork of the [original Siemens OZW672 integration by
 John Ahern Infotrack](https://github.com/johnaherninfotrack/homeassistant_custom_siemensozw672).

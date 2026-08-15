@@ -1,6 +1,6 @@
 # Siemens OZW672 Unofficial — Enhanced Fork
 
-**Version: 0.4.0-beta1**
+**Version: 0.4.0-beta2**
 
 [![HACS Custom][hacs-badge]][hacs]
 [![License: MIT][license-badge]][license]

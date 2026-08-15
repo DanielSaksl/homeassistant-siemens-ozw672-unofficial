@@ -2,7 +2,7 @@
 
 NAME = "Siemens OZW672"
 DOMAIN = "siemens_ozw672"
-VERSION = "0.4.0-beta1"
+VERSION = "0.4.0-beta2"
 ATTRIBUTION = "Integration created by John"
 
 ICON = "mdi:bookmark"
