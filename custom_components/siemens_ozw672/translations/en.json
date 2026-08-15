@@ -30,13 +30,18 @@
       },
       "browser": {
         "title": "Datapoint Browser",
-        "description": "The OZW menu tree is scanned now, only for this browser session. Search by datapoint name and select an item; its metadata is loaded only after selection. Diagnostic: {error}",
+        "description": "The OZW menu tree is scanned now, only for this browser session. Search by datapoint ID, name, or operation line and select one or more items; their metadata is loaded only after selection. Diagnostic: {error}",
         "data": {"datapoint_id": "Search datapoints by name or operation line"}
       },
       "add_entity": {
         "title": "Add Entity",
         "submit": "Add Entity",
         "description": "Name: {name}\nCurrent value: {value} {unit}\nDatatype: {datatype}\nWritable: {writable}\nEnumeration values: {enums}\nHome Assistant entity: {entity_type}\n\nSubmit to add this entity."
+      },
+      "add_entities": {
+        "title": "Add entities",
+        "submit": "Add entities",
+        "description": "Metadata was loaded for {count} datapoints:\n{names}\n\nDiagnostic: {error}\n\nSubmit to add all listed entities."
       },
       "remove": {
         "title": "Remove datapoint",

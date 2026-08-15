@@ -92,8 +92,7 @@ class SiemensOzw672OptionsFlowHandler(config_entries.OptionsFlow):
     """Manual datapoint browser and entity manager."""
 
     def __init__(self):
-        self._candidate: dict | None = None
-        self._candidate_data: dict | None = None
+        self._candidates: list[tuple[dict, dict]] = []
         self._datapoint_index: dict[str, dict] | None = None
         self._errors: dict[str, str] = {}
         self._browser_error = ""
@@ -114,25 +113,43 @@ class SiemensOzw672OptionsFlowHandler(config_entries.OptionsFlow):
                 self._errors["base"] = "cannot_connect"
                 self._datapoint_index = {}
         if user_input is not None:
-            raw = self._datapoint_index.get(user_input[CONF_DATAPOINT_ID])
-            if raw is None:
-                self._errors["base"] = "datapoint_not_found"
+            self._browser_error = ""
+            selected_ids = user_input[CONF_DATAPOINT_ID]
+            if isinstance(selected_ids, str):
+                selected_ids = [selected_ids]
+            self._candidates = []
+            failures = []
+            for datapoint_id in selected_ids:
+                raw = self._datapoint_index.get(datapoint_id)
+                if raw is None:
+                    failures.append(f"{datapoint_id}: not found")
+                    continue
+                try:
+                    self._candidates.append(await self._load_datapoint(raw))
+                except Exception as err:
+                    _LOGGER.exception(
+                        "Unable to load manually requested datapoint %s", datapoint_id
+                    )
+                    failures.append(f"{datapoint_id}: {type(err).__name__}: {err}")
+
+            if failures:
+                self._browser_error = "; ".join(failures)
+            if not self._candidates:
+                self._errors["base"] = (
+                    "datapoint_not_found" if not failures else "datapoint_processing_failed"
+                )
                 return await self.async_step_browser()
-            try:
-                candidate, data = await self._load_datapoint(raw)
-            except Exception as err:
-                _LOGGER.exception("Unable to load manually requested datapoint")
-                self._browser_error = f"{type(err).__name__}: {err}"
-                self._errors["base"] = "datapoint_processing_failed"
-            else:
-                self._candidate = candidate
-                self._candidate_data = data
+            if len(self._candidates) == 1:
                 return await self.async_step_add_entity()
+            return await self.async_step_add_entities()
 
         options = [
             selector.SelectOptionDict(
                 value=internal_id,
-                label=f'{raw["Text"].get("Id", "—")} — {raw["Text"].get("Long", internal_id)}',
+                label=(
+                    f'{internal_id} — {raw["Text"].get("Long", internal_id)} '
+                    f'({raw["Text"].get("Id", "—")})'
+                ),
             )
             for internal_id, raw in sorted(
                 self._datapoint_index.items(),
@@ -146,6 +163,7 @@ class SiemensOzw672OptionsFlowHandler(config_entries.OptionsFlow):
                     selector.SelectSelectorConfig(
                         options=options,
                         mode=selector.SelectSelectorMode.DROPDOWN,
+                        multiple=True,
                     )
                 )
             }),
@@ -155,30 +173,61 @@ class SiemensOzw672OptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_add_entity(self, user_input=None):
         """Show metadata and persist the explicitly approved datapoint."""
-        if self._candidate is None or self._candidate_data is None:
+        if len(self._candidates) != 1:
             return await self.async_step_browser()
+        candidate, candidate_data = self._candidates[0]
         if user_input is not None:
-            datapoints = list(self.config_entry.data.get(CONF_DATAPOINTS, []))
-            if not any(dp["Id"] == self._candidate["Id"] for dp in datapoints):
-                datapoints.append(self._candidate)
-                data = {**self.config_entry.data, CONF_DATAPOINTS: datapoints}
-                self.hass.config_entries.async_update_entry(self.config_entry, data=data)
+            self._save_candidates()
             return self.async_create_entry(title="", data=dict(self.config_entry.options))
 
-        description = self._candidate["DPDescr"]
+        description = candidate["DPDescr"]
         enum_values = ", ".join(item["Text"] for item in description.get("Enums", [])) or "—"
         return self.async_show_form(
             step_id="add_entity",
             data_schema=vol.Schema({}),
             description_placeholders={
-                "name": self._candidate["Name"],
-                "value": str(self._candidate_data["Data"].get("Value", "")),
-                "unit": self._candidate_data["Data"].get("Unit", "") or "—",
+                "name": candidate["Name"],
+                "value": str(candidate_data["Data"].get("Value", "")),
+                "unit": candidate_data["Data"].get("Unit", "") or "—",
                 "datatype": description.get("Type", "unknown"),
-                "writable": "Yes" if self._candidate["WriteAccess"] == "true" else "No",
+                "writable": "Yes" if candidate["WriteAccess"] == "true" else "No",
                 "enums": enum_values,
                 "entity_type": description["HAType"],
             },
+        )
+
+    async def async_step_add_entities(self, user_input=None):
+        """Confirm adding every successfully loaded datapoint in a batch."""
+        if len(self._candidates) < 2:
+            return await self.async_step_browser()
+        if user_input is not None:
+            self._save_candidates()
+            return self.async_create_entry(title="", data=dict(self.config_entry.options))
+
+        return self.async_show_form(
+            step_id="add_entities",
+            data_schema=vol.Schema({}),
+            description_placeholders={
+                "count": str(len(self._candidates)),
+                "error": self._browser_error or "None",
+                "names": "\n".join(
+                    f'{candidate["Id"]}: {candidate["Name"]}'
+                    for candidate, _data in self._candidates
+                ),
+            },
+        )
+
+    def _save_candidates(self) -> None:
+        """Save loaded datapoints together so the entry reloads only once."""
+        datapoints = list(self.config_entry.data.get(CONF_DATAPOINTS, []))
+        existing_ids = {datapoint["Id"] for datapoint in datapoints}
+        for candidate, _data in self._candidates:
+            if candidate["Id"] not in existing_ids:
+                datapoints.append(candidate)
+                existing_ids.add(candidate["Id"])
+        self.hass.config_entries.async_update_entry(
+            self.config_entry,
+            data={**self.config_entry.data, CONF_DATAPOINTS: datapoints},
         )
 
     async def async_step_remove(self, user_input=None):

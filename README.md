@@ -21,7 +21,7 @@ endorsed by, sponsored by, or approved by Siemens AG or its subsidiaries.
 - Supports writes for compatible `number`, `select`, and `switch` datapoints
   when the gateway reports that the datapoint is writable. The gateway can
   still reject a write.
-- Uses the **Datapoint Browser** to add datapoints explicitly, one at a time.
+- Uses the **Datapoint Browser** to add datapoints explicitly, individually or in batches.
 - Polls only the datapoints that you have added. Opening the integration does
   not create or continuously poll the full OZW menu tree.
 
@@ -30,9 +30,11 @@ endorsed by, sponsored by, or approved by Siemens AG or its subsidiaries.
 After the connection has been created, open **Settings → Devices & services →
 Siemens OZW672 (Unofficial) → Configure** and choose **Datapoint Browser**.
 
-The browser loads the OZW menu tree for that session, lets you select a
-datapoint by name or operation line, and shows its metadata before it is added.
-Only after confirmation is the datapoint saved and included in normal polling.
+The browser loads the OZW menu tree for that session, lets you search by
+datapoint ID, name, or operation line, and select one or more datapoints. It
+loads metadata only for the selected datapoints and shows it before they are
+added. Only after confirmation are the datapoints saved and included in normal
+polling.
 Use **Remove Datapoint** from the same Configure menu to stop polling a saved
 datapoint and remove its entity.
 

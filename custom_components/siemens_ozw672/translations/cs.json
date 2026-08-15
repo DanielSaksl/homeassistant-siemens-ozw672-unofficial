@@ -40,6 +40,11 @@
         "submit": "Přidat entitu",
         "description": "Název: {name}\nAktuální hodnota: {value} {unit}\nDatový typ: {datatype}\nZapisovatelný: {writable}\nHodnoty výčtu: {enums}\nEntita Home Assistantu: {entity_type}\n\nPotvrzením přidáte entitu."
       },
+      "add_entities": {
+        "title": "Přidat entity",
+        "submit": "Přidat entity",
+        "description": "Metadata byla načtena pro {count} datových bodů:\n{names}\n\nDiagnostika: {error}\n\nPotvrzením přidáte všechny uvedené entity."
+      },
       "remove": {
         "title": "Odebrat datový bod",
         "data": {"datapoint_id": "Datový bod"}
